@@ -75,9 +75,3 @@ let BASE64 = {
 };
 
 export default BASE64
-
-// var str='hello world!';
-// var enstr=BASE64.encode(str);
-// alert(enstr);
-// var destr=BASE64.decode(enstr);
-// alert(destr);
