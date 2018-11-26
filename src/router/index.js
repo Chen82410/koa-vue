@@ -31,7 +31,7 @@ const Mine = (resolve) => {
   })
 }
 
-// 个人中心
+// 发帖
 const Release = (resolve) => {
   import('../pages/release/release').then((module) => {
     resolve(module)
@@ -73,7 +73,7 @@ export default new Router({
     },
     //帖子详情页
     {
-      path: 'invitationDetail',
+      path: '/invitationDetail',
       name: 'InvitationDetail',
       component: InvitationDetail
     },

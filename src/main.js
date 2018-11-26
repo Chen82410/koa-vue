@@ -4,14 +4,12 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import MuseUI from 'muse-ui'
-import Toast from 'muse-ui-toast'
 import 'muse-ui/dist/muse-ui.css'
 import './assets/material-icons.css'
 
 Vue.config.productionTip = false
 
 Vue.use(MuseUI)
-Vue.use(Toast);
 
 /* eslint-disable no-new */
 new Vue({

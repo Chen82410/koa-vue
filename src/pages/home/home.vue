@@ -83,7 +83,7 @@ export default {
     },
     toInvitationDetail(item) {
       this.$router.push({
-        path: '/invitationDetail',
+        path: 'invitationDetail',
         name: 'InvitationDetail',
         params: {
           invitationMain: item
@@ -127,7 +127,7 @@ export default {
 .home-root {
   width: 100%;
   box-sizing: border-box;
-  padding: 24px 25%;
+  padding: 24px 5%;
   .home-bg {
     width: 100%;
     box-sizing: border-box;

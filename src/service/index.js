@@ -112,6 +112,12 @@ export function postPersonalData(account, personalMsg) {
   })
 }
 
+/**
+ * 
+ * @param {string} account 
+ * @param {string} avatar base64
+ * @param {string} imageType gif/jpg/jpeg/png
+ */
 export function postAvatar(account, avatar, imageType) {
   return axios({
     url: `${URL}/personal_data/avatar`,
@@ -246,4 +252,17 @@ export function getPersonalMsg(account) {
     account: account
   }
   return jsonp(`${URL}/personal_msg`, data)
+}
+
+/**
+ * 
+ * @param {string} account 
+ * @param {string} contentId 
+ */
+export function getInvitationDetail(account, contentId) {
+  const data = {
+    account: account,
+    content_id: contentId
+  }
+  return jsonp(`${URL}/invitation_detail`, data)
 }

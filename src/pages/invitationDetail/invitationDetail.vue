@@ -1,7 +1,7 @@
 <template>
   <div class="invitation-detail-root">
     <div class="invitation-detail-bg">
-      <div class="content-part">
+      <div class="content-part" v-if="invitationMain.article_msg">
         <div class="top">
           <div class="top-left">
             <img :src="invitationMain.author[0].avatar" class="avatar">
@@ -14,8 +14,8 @@
         <h3 class="title">{{invitationMain.article_msg.title}}</h3>
         <div class="content-detail" v-html="invitationMain.article_msg.content.replace(/\n/g,'</br>')"></div>
       </div>
-      <h3>所有回复({{replies.length}})</h3>
-      <div class="replies" v-for="(item, index) in replies">
+      <h3>所有回复({{invitationMain.replies ? invitationMain.replies.length : 0}})</h3>
+      <div class="replies" v-for="(item, index) in invitationMain.replies" v-if="invitationMain.replies">
         <div class="replies-inside">
           <div class="replies-top">
             <div class="left">
@@ -26,7 +26,8 @@
               <span>{{dateFormat(new Date(item.reply_time))}}</span>
             </div>
           </div>
-          <div class="replies-bottom" v-html="item.reply_content.replace(/\n/g, '</br>')">         </div>
+          <div class="replies-bottom" v-html="item.reply_content.replace(/\n/g, '</br>')">
+          </div>
         </div>
       </div>
     </div>
@@ -38,7 +39,7 @@
 </template>
 
 <script>
-import { replyContent } from "../../service/index.js";
+import { replyContent, getInvitationDetail } from "../../service/index.js";
 import BASE64 from "../../utils/base64.js";
 import Utils from "../../utils/utils.js";
 import Toast from 'muse-ui-toast'
@@ -46,14 +47,27 @@ import Toast from 'muse-ui-toast'
 export default {
   data() {
     return {
-      invitationMain: this.$route.params.invitationMain,
+      invitationMain: this.$route.params.invitationMain || {},
       color: '',
       reply_content: '',
-      replies: this.$route.params.invitationMain.replies || []
+      // replies: this.$route.params.invitationMain.replies || []
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    sessionStorage.clear()
+    next()
+  },
+  created() {
+    console.log(this.invitationMain)
+    if (!this.invitationMain.article_msg) {
+      this._getInvitationDetail()
+    } else {
+      sessionStorage.setItem('content_id', this.invitationMain._id)
     }
   },
   mounted() {
-    console.log(this.invitationMain)
+    // console.log(this.invitationMain)
+    window.scrollTo(0, 0)
   },
   methods: {
     submitMsg() {
@@ -69,16 +83,10 @@ export default {
               if (res.data.retcode === 1) {
                 Toast.info(res.data.errMsg)
                 this.reply_content = ''
-                this.replies.push(res.data)
+                this.invitationMain.replies.push(res.data)
                 setTimeout(() => {
-                  (function smoothscroll(){
-                    let currentScroll = document.documentElement.offsetHeight
-                    if (currentScroll > 0) {
-                      window.requestAnimationFrame(smoothscroll)
-                      window.scrollTo(0,currentScroll - (currentScroll / 5))
-                    }
-                  })()
-                }, 0)
+                  window.scrollTo(0, document.documentElement.offsetHeight)
+                }, 0);
               } else {
                 Toast.info(res.data.errMsg)
               }
@@ -91,6 +99,20 @@ export default {
     },
     dateFormat(date) {
       return Utils.dateFormat(date, 'yyyy-MM-dd hh:mm')
+    },
+    _getInvitationDetail() {
+      getInvitationDetail(BASE64.decode(Utils.getCookie("BLOG_CHEN")), sessionStorage.getItem('content_id'))
+      .then(res => {
+        if (res.article_msg) {
+          console.log(res)
+          this.invitationMain = res
+        } else {
+          Toast.info('查询失败!请稍后重试!')
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
     }
   },
   watch: {
@@ -114,7 +136,7 @@ export default {
   .invitation-detail-root
     width: 100%;
     box-sizing: border-box;
-    padding: 24px 25% 70px 25%;
+    padding: 24px 5% 70px 5%;
     .invitation-detail-bg
       width 100%
       box-sizing border-box
@@ -181,9 +203,9 @@ export default {
             padding 10px 90px
     .reply
       position fixed
-      width 50%
+      width 90%
       bottom 0
-      left 25%
+      left 5%
       display flex
       background-color #fff
 </style>
