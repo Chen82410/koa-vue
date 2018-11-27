@@ -128,6 +128,9 @@ export default {
         (this.src.indexOf(",") + 1)
         postAvatar(account, imageBase64, imageType)
           .then(res => {
+            if (res.data.retcode === 1) {
+              Toast.info(res.data.errMsg)
+            }
             console.log(res)
           })
           .catch(err => {
