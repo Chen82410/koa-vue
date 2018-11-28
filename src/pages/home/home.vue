@@ -1,7 +1,7 @@
 <template>
   <div class="home-root">
     <div class="home-bg">
-      <div class="content-part" v-for="(item, index) in invitationList" @click="toInvitationDetail(item)">
+      <div class="content-part" v-for="(item, index) in invitationList" @click="toInvitationDetail(item._id)">
         <div class="top">
           <div class="top-left">
             <img :src="item.author[0].avatar" class="avatar">
@@ -81,12 +81,12 @@ export default {
           console.log(error);
         });
     },
-    toInvitationDetail(item) {
+    toInvitationDetail(content_id) {
       this.$router.push({
         path: 'invitationDetail',
         name: 'InvitationDetail',
         params: {
-          invitationMain: item
+          content_id: content_id
         }
       })
     },
