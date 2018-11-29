@@ -49,10 +49,8 @@ export default {
     return {
       invitationMain: {},
       content_id: this.$route.params.content_id,
-      // invitationMain: {},
       color: '',
       reply_content: '',
-      // replies: this.$route.params.invitationMain.replies || []
     }
   },
   beforeRouteLeave(to, from, next) {
@@ -60,20 +58,16 @@ export default {
     next()
   },
   created() {
-    // console.log(this.invitationMain)
-    sessionStorage.setItem('content_id', this.content_id)
-    // setTimeout(() => {
-    //   this._getInvitationDetail()
-    // }, 0);
-    // if (!this.invitationMain.article_msg) {
-    //   this._getInvitationDetail()
-    // } else {
-    //   sessionStorage.setItem('content_id', this.content_id)
-    // }
+    if (!this.content_id) {
+      this._getInvitationDetail()
+    } else {
+      sessionStorage.setItem('content_id', this.content_id)
+    }
   },
   mounted() {
     this._getInvitationDetail()
     // console.log(this.invitationMain)
+    console.log(sessionStorage.getItem('content_id'))
     window.scrollTo(0, 0)
   },
   methods: {
@@ -86,7 +80,7 @@ export default {
         } else {
           replyContent(this.reply_content, this.content_id, account)
             .then(res => {
-              console.log(res)
+              // console.log(res)
               if (res.data.retcode === 1) {
                 Toast.info(res.data.errMsg)
                 this.reply_content = ''
@@ -111,7 +105,7 @@ export default {
     _getInvitationDetail() {
       getInvitationDetail(BASE64.decode(Utils.getCookie("BLOG_CHEN")), sessionStorage.getItem('content_id'))
       .then(res => {
-        console.log(res)
+        // console.log(res)
         if (res.article_msg) {
           console.log(res)
           this.invitationMain = res
