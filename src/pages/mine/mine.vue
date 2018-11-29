@@ -91,6 +91,10 @@ export default {
       }
     },
     submitAvatar() {
+      if (this.src.indexOf('http') !== -1) {
+        Toast.info('您还没有变更头像哦!')
+        return
+      }
       if (!Utils.getCookie("BLOG_CHEN")) {
         Toast.info("请先登录!");
         this.$router.push("/login");
@@ -101,29 +105,18 @@ export default {
       let file = this.$refs.avatarInput.files[0]
       // http://localhost:3002/personal_data/avatar
       if (this.$refs.avatarInput.files.length !== 0) {
-        // let image = new FormData()
         console.log(this.$refs.avatarInput.files[0])
-        // image.append('avatar', this.$refs.avatarInput.files[0])
-        // console.log(image.get('avatar'))
-        // postAvatar(image.get('avatar')).then(res => {
-        //   console.log(res)
-        // }).catch(err => {
-        //   console.log(err)
-        // })
-        // console.log(this.src)
         let imageType = ''
         let imageTypeSlice = this.src.slice(0,18)
-        // console.log(this.src.slice(0,18).indexOf("image/gif;"))
-        if (imageTypeSlice.indexOf("image/gif;") != -1) {
+        if (imageTypeSlice.indexOf("image/gif;") !== -1) {
           imageType = 'gif'
-        } else if (imageTypeSlice.indexOf("image/png;") != -1) {
+        } else if (imageTypeSlice.indexOf("image/png;") !== -1) {
           imageType = 'png'
-        } else if (imageTypeSlice.indexOf("image/jpg;") != -1) {
+        } else if (imageTypeSlice.indexOf("image/jpg;") !== -1) {
           imageType = 'jpg'
-        } else if (imageTypeSlice.indexOf("image/jpeg;") != -1) {
+        } else if (imageTypeSlice.indexOf("image/jpeg;") !== -1) {
           imageType = 'jpeg'
         }
-        // console.log(imageType)
         let imageBase64 = this.src.substring
         (this.src.indexOf(",") + 1)
         postAvatar(account, imageBase64, imageType)
