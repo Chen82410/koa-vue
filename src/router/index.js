@@ -45,6 +45,13 @@ const InvitationDetail = (resolve) => {
   })
 }
 
+// 404
+const NotFound = (resolve) => {
+  import('../pages/404.vue').then((module) => {
+    resolve(module)
+  })
+}
+
 export default new Router({
   routes: [
     {
@@ -88,6 +95,16 @@ export default new Router({
       path: '/release',
       name: 'Release',
       component: Release
+    },
+    // 404
+    {
+      path: '/404',
+      name: "404",
+      component: NotFound
+    },
+    {
+      path: '*',
+      redirect: '/404'
     }
   ]
 })

@@ -8,11 +8,17 @@
 
 <script>
 import TopHeader from './components/header'
+import bus from './bus.js'
 
 export default {
   name: 'App',
   components: {
     TopHeader
+  },
+  created() {
+    bus.$on('goto', (url) => {
+      this.$router.push(url)
+    })
   }
 }
 </script>

@@ -42,7 +42,6 @@
           </mu-list-item>
         </mu-list>
       </mu-menu>
-
       <!-- <mu-button flat slot="right" :class="(router == '/home') ? 'active' : ''" @click="toRouter('/home')">首页</mu-button>
       <mu-button flat slot="right" :class="(router == '/release') ? 'active' : ''" @click="toRelease('/release')">发帖</mu-button>
       <mu-button flat slot="right" :class="(router == '/login') ? 'active' : ''" @click="toRouter('/login')">登陆</mu-button>
@@ -94,8 +93,7 @@ export default {
   },
   watch: {
     $route(to, from) {
-      this.router = to.path
-      console.log(to.path)
+      // this.router = to.path
       switch(to.path) {
         case '/home': 
           this.pageName = '首页'

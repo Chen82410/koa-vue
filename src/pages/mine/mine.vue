@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { postPersonalData, postAvatar, getPersonalMsg } from "../../service/index.js";
+import { postPersonalData, postAvatar, getPersonalMsg, test } from "../../service/index.js";
 import VueCoreImageUpload from "vue-core-image-upload";
 import Utils from "../../utils/utils.js";
 import BASE64 from "../../utils/base64.js";
@@ -55,13 +55,11 @@ export default {
     };
   },
   created() {
-    console.log(123)
     this._getPersonalMsg()
   },
   methods: {
     submit() {
-      let that = this
-      console.log(this.form);
+      let that = this      
       if (!Utils.getCookie("BLOG_CHEN")) {
         Toast.info("请先登录!");
         this.$router.push("/login");
@@ -108,13 +106,13 @@ export default {
         console.log(this.$refs.avatarInput.files[0])
         let imageType = ''
         let imageTypeSlice = this.src.slice(0,18)
-        if (imageTypeSlice.indexOf("image/gif;") !== -1) {
+        if (imageTypeSlice.startsWith("data:image/gif;")) {
           imageType = 'gif'
-        } else if (imageTypeSlice.indexOf("image/png;") !== -1) {
+        } else if (imageTypeSlice.startsWith("data:image/png;")) {
           imageType = 'png'
-        } else if (imageTypeSlice.indexOf("image/jpg;") !== -1) {
+        } else if (imageTypeSlice.startsWith("data:image/jpg;")) {
           imageType = 'jpg'
-        } else if (imageTypeSlice.indexOf("image/jpeg;") !== -1) {
+        } else if (imageTypeSlice.startsWith("data:image/jpeg;")) {
           imageType = 'jpeg'
         }
         let imageBase64 = this.src.substring

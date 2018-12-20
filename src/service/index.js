@@ -266,3 +266,10 @@ export function getInvitationDetail(account, contentId) {
   }
   return jsonp(`${URL}/invitation_detail`, data)
 }
+
+export function test(account) {
+  const params = {
+    account: account
+  }
+  return axios.get(`${URL}/personal_msg`, {params: params}).then(res => res.data)
+}
