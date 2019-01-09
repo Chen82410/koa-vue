@@ -36,15 +36,15 @@ export default {
   methods: {
     submit() {
       let that = this
-      let account = BASE64.decode(Utils.getCookie("BLOG_CHEN"))
-      if (!account) {
-        Toast.info('请先登陆!')
-        this.$router.push('/login')
-        return
-      } else if (!this.form.content.length) {
-        Toast.info('内容不能为空!')
-        return
-      }
+      let account = BASE64.decode(this.$store.state.token)
+      // if (!account) {
+      //   Toast.info('请先登陆!')
+      //   this.$router.push('/login')
+      //   return
+      // } else if (!this.form.content.length) {
+      //   Toast.info('内容不能为空!')
+      //   return
+      // }
       releaseInvitation(account, JSON.stringify(this.form))
       .then(res => {
         console.log(res)

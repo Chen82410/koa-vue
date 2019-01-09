@@ -60,16 +60,15 @@ export default {
   methods: {
     submit() {
       let that = this      
-      if (!Utils.getCookie("BLOG_CHEN")) {
-        Toast.info("请先登录!");
-        this.$router.push("/login");
-        return;
-      }
-      let account = BASE64.decode(Utils.getCookie("BLOG_CHEN"));
+      // if (!Utils.getCookie("BLOG_CHEN")) {
+      //   Toast.info("请先登录!");
+      //   this.$router.push("/login");
+      //   return;
+      // }
+      let account = BASE64.decode(this.$store.state.token);
       this.form.birthday = this.form.birthday || Utils.dateFormat(this.form.birthday, "yyyy-MM-dd");
       postPersonalData(account, JSON.stringify(this.form))
         .then(res => {
-          // console.log(res)
           that.clear()
           Toast.info(res.data.errMsg)
           that._getPersonalMsg()
@@ -93,12 +92,12 @@ export default {
         Toast.info('您还没有变更头像哦!')
         return
       }
-      if (!Utils.getCookie("BLOG_CHEN")) {
-        Toast.info("请先登录!");
-        this.$router.push("/login");
-        return;
-      }
-      let account = BASE64.decode(Utils.getCookie("BLOG_CHEN"))
+      // if (!Utils.getCookie("BLOG_CHEN")) {
+      //   Toast.info("请先登录!");
+      //   this.$router.push("/login");
+      //   return;
+      // }
+      let account = BASE64.decode(this.$store.state.token)
       let reader = new FileReader()
       let file = this.$refs.avatarInput.files[0]
       // http://localhost:3002/personal_data/avatar
@@ -115,8 +114,7 @@ export default {
         } else if (imageTypeSlice.startsWith("data:image/jpeg;")) {
           imageType = 'jpeg'
         }
-        let imageBase64 = this.src.substring
-        (this.src.indexOf(",") + 1)
+        let imageBase64 = this.src.substring(this.src.indexOf(",") + 1)
         postAvatar(account, imageBase64, imageType)
           .then(res => {
             if (res.data.retcode === 1) {
@@ -141,15 +139,15 @@ export default {
       this.$refs.avatarInput.click()
     },
     _getPersonalMsg() {
-      let account = BASE64.decode(Utils.getCookie("BLOG_CHEN"))
+      let account = BASE64.decode(this.$store.state.token)
       getPersonalMsg(account)
         .then(res => {
           console.log(res)
-          this.src = res.avatar
-          this.form.nickname = res.nickname
-          this.form.signature = res.signature || ''
-          this.form.birthday = res.birthday || ''
-          this.form.gender = res.gender || ''
+          this.src = res.data.avatar
+          this.form.nickname = res.data.nickname
+          this.form.signature = res.data.signature || ''
+          this.form.birthday = res.data.birthday || ''
+          this.form.gender = res.data.gender || ''
         }).catch(err => {
           console.log(err)
         })

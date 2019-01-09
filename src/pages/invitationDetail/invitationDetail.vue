@@ -73,7 +73,7 @@ export default {
   methods: {
     submitMsg() {
       if (this.reply_content.replace(/ /g, '').length) {
-        let account = BASE64.decode(Utils.getCookie("BLOG_CHEN"))
+        let account = BASE64.decode(this.$store.state.token)
         if (!account) {
           Toast.info('请先登陆!')
           this.$router.push('/login')
@@ -103,12 +103,11 @@ export default {
       return Utils.dateFormat(date, 'yyyy-MM-dd hh:mm')
     },
     _getInvitationDetail() {
-      getInvitationDetail(BASE64.decode(Utils.getCookie("BLOG_CHEN")), sessionStorage.getItem('content_id'))
+      getInvitationDetail(BASE64.decode(this.$store.state.token), sessionStorage.getItem('content_id'))
       .then(res => {
-        // console.log(res)
-        if (res.article_msg) {
+        if (res.data.article_msg) {
           console.log(res)
-          this.invitationMain = res
+          this.invitationMain = res.data
         } else {
           Toast.info('查询失败!请稍后重试!')
         }

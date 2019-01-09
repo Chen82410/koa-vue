@@ -37,6 +37,7 @@ import { getInvitationList, favor } from "../../service/index.js";
 import BASE64 from "../../utils/base64.js";
 import Utils from "../../utils/utils.js";
 import Toast from 'muse-ui-toast'
+import bus from '../../bus.js';
 
 export default {
   data() {
@@ -48,16 +49,28 @@ export default {
     };
   },
   created() {
+    bus.$on('login',(url) => {
+      if (url === '/login') {
+        Utils.clearCookie('BLOG_CHEN')
+        this.$router.push(url)
+      }
+    })
+    this.$store.commit('getCookie', Utils.getCookie("BLOG_CHEN"))
     let tempName = Utils.getCookie("BLOG_CHEN");
-    if (Utils.getCookie("BLOG_CHEN")) {
-      Utils.setCookie("BLOG_CHEN", tempName, 1);
-      this._getInvitationList(this.current, this.pageSize, BASE64.decode(Utils.getCookie("BLOG_CHEN")))
-    } else {
-      Toast.info('请先登录!')
-      this.$router.push({
-        path: "/login"
-      });
-    }
+    // let token = BASE64.decode(this.$store.state.token) ? BASE64.decode(this.$store.state.token) : BASE64.decode(Utils.getCookie("BLOG_CHEN"))
+    // this._getInvitationList(this.current, this.pageSize, token)
+    console.log(this.$store.state.token)
+    this._getInvitationList(this.current, this.pageSize)
+
+    // if (Utils.getCookie("BLOG_CHEN")) {
+    //   Utils.setCookie("BLOG_CHEN", tempName, 1);
+    //   this._getInvitationList(this.current, this.pageSize, BASE64.decode(Utils.getCookie("BLOG_CHEN")))
+    // } else {
+    //   Toast.info('请先登录!')
+    //   this.$router.push({
+    //     path: "/login"
+    //   });
+    // }
   },
   methods: {
     pageChange() {
@@ -71,11 +84,11 @@ export default {
       this._getInvitationList(this.current, this.pageSize)
     },
     _getInvitationList(current, size) {
-      getInvitationList(current, size, BASE64.decode(Utils.getCookie("BLOG_CHEN")))
+      getInvitationList(current, size, this.$store.state.token)
         .then(res => {
           console.log(res);
-          this.invitationList = res.data
-          this.count = res.totalCount
+          this.invitationList = res.data.data
+          this.count = res.data.totalCount
         })
         .catch(error => {
           console.log(error);
@@ -94,27 +107,27 @@ export default {
       item.is_my_favor = item.is_my_favor || 0
       let favorType = [1,0]
       // console.log(typeof parseInt(item.is_my_favor), item.is_my_favor)
-      if (!BASE64.decode(Utils.getCookie("BLOG_CHEN"))) {
-        Toast.info('您还未登陆!')
-        this.$router.push('/login')
-        return
-      }
-      favor(item._id, favorType[item.is_my_favor],BASE64.decode(Utils.getCookie("BLOG_CHEN")))
+      // if (!BASE64.decode(Utils.getCookie("BLOG_CHEN"))) {
+      //   Toast.info('您还未登陆!')
+      //   this.$router.push('/login')
+      //   return
+      // }
+      favor(item._id, favorType[item.is_my_favor],BASE64.decode(this.$store.state.token))
         .then(res => {
           console.log(res)
-          if (res.retcode) {
+          if (res.data.retcode) {
             this.invitationList[index].is_my_favor = favorType[item.is_my_favor]
             if (item.is_my_favor) {
               this.invitationList[index].favor_cnt++
             } else {
               this.invitationList[index].favor_cnt--
             }
-            Toast.info(res.errMsg)
+            Toast.info(res.data.errMsg)
           }
         })
         .catch(err => {
           console.log(err)
-          Toast.info(res.errMsg)
+          Toast.info(res.data.errMsg)
         })
     },
     dateFormat(date) {

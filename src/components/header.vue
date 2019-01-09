@@ -40,6 +40,11 @@
               <mu-list-item-title>个人中心</mu-list-item-title>
             </mu-list-item-content>
           </mu-list-item>
+          <mu-list-item button @click="toRouter('manager')">
+            <mu-list-item-content>
+              <mu-list-item-title>后台管理</mu-list-item-title>
+            </mu-list-item-content>
+          </mu-list-item>
         </mu-list>
       </mu-menu>
       <!-- <mu-button flat slot="right" :class="(router == '/home') ? 'active' : ''" @click="toRouter('/home')">首页</mu-button>
@@ -70,11 +75,17 @@ export default {
   },
   methods: {
     toRouter(router) {
-      this.$router.push(router)
       this.open = !this.open
+      router == 'manager' ? window.open('http://localhost:8080') : this.$router.push(router)
+      // if (router == 'manager') {
+      //   window.open('http://localhost:8080')
+      // } else {
+      //   this.$router.push(router)
+      // }
     },
     logOut() {
       Utils.clearCookie('BLOG_CHEN')
+      this.$store.state.token = Utils.getCookie('BLOG_CHEN')
       setTimeout(() => {
         this.$router.push('/login')
         this.open = !this.open
@@ -93,7 +104,6 @@ export default {
   },
   watch: {
     $route(to, from) {
-      // this.router = to.path
       switch(to.path) {
         case '/home': 
           this.pageName = '首页'

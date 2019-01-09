@@ -60,6 +60,7 @@ export default {
               if (res.data.retcode === 1) {
                 let tempName = BASE64.encode(this.validateForm.account)
                 Utils.setCookie('BLOG_CHEN', tempName, 1)
+                this.$store.commit('setCookie', tempName)
                 this.$router.push({
                   path: '/home'
                 })

@@ -36,6 +36,9 @@ let BASE64 = {
   },
 
   decode: function (src) {
+    if (!src) {
+      return ''
+    }
     //用一个数组来存放解码后的字符。
     let str = new Array();
     let ch1,

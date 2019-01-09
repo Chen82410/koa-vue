@@ -2,10 +2,53 @@ import axios from 'axios'
 // import URL from './config'
 import jsonp from './jsonp'
 // import BASE64 from '../utils/base64'
-
+import bus from '../bus'
+import store from '../store/index'
+import Toast from 'muse-ui-toast'
 
 const URL = "http://127.0.0.1:3002"
 
+// 超时时间 axios.defaults.timeout = 15000;
+axios.defaults.withCredentials = true; // 可以设置cookies
+
+// 请求拦截器 request
+axios
+  .interceptors
+  .request
+  .use(config => {
+    if (store.state.token) {
+      config.headers.Authorization = `token ${store.state.token}`;
+    }
+    return config
+  }, err => {
+    return Promise.reject(err)
+  })
+
+// 响应拦截器 response
+axios
+  .interceptors
+  .response
+  .use(response => {
+    // if (response.status && parseInt(response.status) === 400) {
+    //   console.log(response)
+    //   bus.$emit('login', '/login')
+    // }
+    if (response.data.errcode === 3) {
+      // console.log(12345)
+      Toast.info('请前往登陆')
+      bus.$emit('login', '/login')
+    }
+    // console.log(response)
+    return response;
+  }, error => {    
+    // console.log(error.response)
+    // if (error.response.status && error.response.status == 400) {
+    // // if (error.response.data.errcode === 3) {
+    //   console.log(12345)
+    //   bus.$emit('login', '/login')
+    // }
+    return Promise.reject(error.response.data) // 返回接口返回的错误信息
+  });
 
 /**
  *注册
@@ -23,15 +66,10 @@ export function register(account, password) {
       account: account,
       password: password
     },
-    transformRequest: [
-      function(data) {
+    transformRequest: [function (data) {
         let ret = "";
         for (let it in data) {
-          ret +=
-            encodeURIComponent(it) +
-            "=" +
-            encodeURIComponent(data[it]) +
-            "&";
+          ret += encodeURIComponent(it) + "=" + encodeURIComponent(data[it]) + "&";
         }
         return ret;
       }
@@ -41,8 +79,6 @@ export function register(account, password) {
     }
   })
 }
-
-
 
 /**
  *登陆
@@ -60,15 +96,10 @@ export function login(account, password) {
       account: account,
       password: password
     },
-    transformRequest: [
-      function(data) {
+    transformRequest: [function (data) {
         let ret = "";
         for (let it in data) {
-          ret +=
-            encodeURIComponent(it) +
-            "=" +
-            encodeURIComponent(data[it]) +
-            "&";
+          ret += encodeURIComponent(it) + "=" + encodeURIComponent(data[it]) + "&";
         }
         return ret;
       }
@@ -81,9 +112,9 @@ export function login(account, password) {
 
 /**
  * 提交个人信息
- * @param {string} account 
- * @param {string} personalMsg 
- * 
+ * @param {string} account
+ * @param {string} personalMsg
+ *
  */
 export function postPersonalData(account, personalMsg) {
   return axios({
@@ -93,15 +124,10 @@ export function postPersonalData(account, personalMsg) {
       account: account,
       personal_msg: personalMsg
     },
-    transformRequest: [
-      function(data) {
+    transformRequest: [function (data) {
         let ret = "";
         for (let it in data) {
-          ret +=
-            encodeURIComponent(it) +
-            "=" +
-            encodeURIComponent(data[it]) +
-            "&";
+          ret += encodeURIComponent(it) + "=" + encodeURIComponent(data[it]) + "&";
         }
         return ret;
       }
@@ -113,8 +139,8 @@ export function postPersonalData(account, personalMsg) {
 }
 
 /**
- * 
- * @param {string} account 
+ *
+ * @param {string} account
  * @param {string} avatar base64
  * @param {string} imageType gif/jpg/jpeg/png
  */
@@ -127,15 +153,10 @@ export function postAvatar(account, avatar, imageType) {
       avatar: avatar,
       image_type: imageType
     },
-    transformRequest: [
-      function(data) {
+    transformRequest: [function (data) {
         let ret = "";
         for (let it in data) {
-          ret +=
-            encodeURIComponent(it) +
-            "=" +
-            encodeURIComponent(data[it]) +
-            "&";
+          ret += encodeURIComponent(it) + "=" + encodeURIComponent(data[it]) + "&";
         }
         return ret;
       }
@@ -146,12 +167,11 @@ export function postAvatar(account, avatar, imageType) {
   })
 }
 
-
 /**
- * 
- * @param {number} pageNum 
- * @param {number} dataCount 
- * @param {string} account 
+ *
+ * @param {number} pageNum
+ * @param {number} dataCount
+ * @param {string} account
  */
 export function getInvitationList(pageNum, dataCount, account) {
   const data = {
@@ -159,13 +179,14 @@ export function getInvitationList(pageNum, dataCount, account) {
     data_count: dataCount,
     account: account
   }
-  return jsonp(`${URL}/home`, data)
+  // return jsonp(`${URL}/home`, data)
+  return axios.get(`${URL}/home`, {params: data})
 }
 
 /**
- * 
- * @param {String} account 
- * @param {Object} data 
+ *
+ * @param {String} account
+ * @param {Object} data
  */
 export function releaseInvitation(account, data) {
   return axios({
@@ -175,15 +196,10 @@ export function releaseInvitation(account, data) {
       author_account: account,
       article_msg: data
     },
-    transformRequest: [
-      function(data) {
+    transformRequest: [function (data) {
         let ret = "";
         for (let it in data) {
-          ret +=
-            encodeURIComponent(it) +
-            "=" +
-            encodeURIComponent(data[it]) +
-            "&";
+          ret += encodeURIComponent(it) + "=" + encodeURIComponent(data[it]) + "&";
         }
         return ret;
       }
@@ -209,15 +225,10 @@ export function replyContent(content, contentId, account) {
       content_id: contentId,
       reply_from: account
     },
-    transformRequest: [
-      function(data) {
+    transformRequest: [function (data) {
         let ret = "";
         for (let it in data) {
-          ret +=
-            encodeURIComponent(it) +
-            "=" +
-            encodeURIComponent(data[it]) +
-            "&";
+          ret += encodeURIComponent(it) + "=" + encodeURIComponent(data[it]) + "&";
         }
         return ret;
       }
@@ -240,36 +251,41 @@ export function favor(content_id, favor_type, account) {
     favor_type: favor_type,
     account: account
   }
-  return jsonp(`${URL}/favor`, data)
+  // return jsonp(`${URL}/favor`, data)
+  return axios(`${URL}/favor`, {params: data})
 }
 
 /**
  * 获取个人信息
- * @param {String} account 
+ * @param {String} account
  */
 export function getPersonalMsg(account) {
   const data = {
     account: account
   }
-  return jsonp(`${URL}/personal_msg`, data)
+  // return jsonp(`${URL}/personal_msg`, data)
+  return axios(`${URL}/personal_msg`, {params: data})
 }
 
 /**
- * 
- * @param {string} account 
- * @param {string} contentId 
+ *
+ * @param {string} account
+ * @param {string} contentId
  */
 export function getInvitationDetail(account, contentId) {
   const data = {
     account: account,
     content_id: contentId
   }
-  return jsonp(`${URL}/invitation_detail`, data)
+  // return jsonp(`${URL}/invitation_detail`, data)
+  return axios(`${URL}/invitation_detail`, {params: data})
 }
 
 export function test(account) {
   const params = {
     account: account
   }
-  return axios.get(`${URL}/personal_msg`, {params: params}).then(res => res.data)
+  return axios
+    .get(`${URL}/personal_msg`, {params: params})
+    .then(res => res.data)
 }

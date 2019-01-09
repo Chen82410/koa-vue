@@ -9,6 +9,7 @@
 <script>
 import TopHeader from './components/header'
 import bus from './bus.js'
+import Utils from './utils/utils'
 
 export default {
   name: 'App',
@@ -16,9 +17,13 @@ export default {
     TopHeader
   },
   created() {
-    bus.$on('goto', (url) => {
-      this.$router.push(url)
-    })
+    bus.$on('login',(url) => {
+      if (url === '/login') {
+        Utils.clearCookie('BLOG_CHEN')
+        this.$router.push(url)
+      }
+    }),
+    this.$store.state.token = Utils.getCookie('BLOG_CHEN')
   }
 }
 </script>

@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import MuseUI from 'muse-ui'
+import store from './store/index'
 import 'muse-ui/dist/muse-ui.css'
 import './assets/material-icons.css'
 
@@ -15,6 +16,7 @@ Vue.use(MuseUI)
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })
