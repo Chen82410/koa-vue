@@ -116,6 +116,7 @@ export default {
         .then(res => {
           console.log(res)
           if (res.data.retcode) {
+            // debugger
             this.invitationList[index].is_my_favor = favorType[item.is_my_favor]
             if (item.is_my_favor) {
               this.invitationList[index].favor_cnt++
